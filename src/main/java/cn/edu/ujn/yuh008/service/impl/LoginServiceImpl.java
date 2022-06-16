@@ -6,18 +6,19 @@ import cn.edu.ujn.yuh008.pojo.entity.Token;
 import cn.edu.ujn.yuh008.pojo.entity.User;
 import cn.edu.ujn.yuh008.pojo.enums.ResultEnum;
 import cn.edu.ujn.yuh008.pojo.request.LoginCheckRequest;
+import cn.edu.ujn.yuh008.pojo.request.RegisterRequset;
 import cn.edu.ujn.yuh008.pojo.response.LoginCheckResponse;
 import cn.edu.ujn.yuh008.service.ILoginService;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.UUID;
+import java.sql.PreparedStatement;
+import java.util.*;
 
 @Service
 public class LoginServiceImpl implements ILoginService {
@@ -59,6 +60,7 @@ public class LoginServiceImpl implements ILoginService {
     @Override
     public boolean tokenCheck(String token, HttpServletResponse response) {
         Token token1 = this.loginDao.queryToken(token);
+        response.setHeader("Content-Type", "application/json");
         if (token1 == null) {
             try(OutputStream outputStream = response.getOutputStream()) {
                 outputStream.write(JSONObject.toJSONString(Result.success("无效的token")).getBytes(StandardCharsets.UTF_8));
@@ -78,5 +80,45 @@ public class LoginServiceImpl implements ILoginService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public Map<String, Object> logout(HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader("token");
+        Map<String, Object> result = new HashMap<>(10);
+        result.put("code", ResultEnum.SUCCESS.getCode());
+        result.put("msg", "已退出登录");
+
+        if (token == null) {
+            return result;
+        }
+        Token token1 = this.loginDao.queryToken(token);
+        if (token1 == null) {
+            return result;
+        }
+        this.loginDao.exceedTokenByUsername(token1.getUsername());
+        return result;
+    }
+
+
+    @Override
+    public Map<String, Object> register(RegisterRequset request) {
+        Map<String, Object> result = new HashMap<>(10);
+        User user = this.loginDao.queryUserByUsername(request.getUsername());
+        if (user != null) {
+            result.put("code", ResultEnum.ERROR.getCode());
+            result.put("msg", "用户名已存在");
+            return result;
+        } else {
+            user = new User();
+            user.setId(UUID.randomUUID().toString());
+            user.setUsername(request.getUsername());
+            user.setPassword(request.getPassword());
+            user.setName(request.getName());
+            user.setStatus(0);
+            result.put("code", ResultEnum.SUCCESS.getCode());
+            result.put("msg", "注册成功");
+            return result;
+        }
     }
 }

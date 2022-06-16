@@ -10,9 +10,13 @@ public interface LoginDao {
 
     User queryUserByUsername(@Param("username") String username);
 
+    Integer insertUser(User user);
+
     void insertToken(Token token);
 
     Token queryToken(@Param("token") String token);
 
     void exceedToken(@Param("token") String token);
+
+    void exceedTokenByUsername(@Param("username") String username);
 }

@@ -1,9 +1,9 @@
 package cn.edu.ujn.yuh008.pojo.enums;
 
 public enum ResultEnum {
-    SUCCESS(200, "成功"),
+    SUCCESS(200, null),
 
-    ERROR(5000, null);
+    ERROR(500, null);
 
     private Integer code;
 

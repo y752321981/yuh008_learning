@@ -9,7 +9,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
     String[] excludePathPatterns = {
-            "/api/v1/login/loginCheck"
+            "/api/v1/login/loginCheck",
+            "/api/v1/login/logout",
+            "/api/v1/login/register"
     };
     @Bean
     public MyInterceptor getMyInterceptor(){

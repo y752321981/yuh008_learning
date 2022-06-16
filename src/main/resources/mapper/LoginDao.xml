@@ -7,10 +7,20 @@
         values(#{id}, #{token}, #{username}, #{exceed_time}, #{is_exceed})
     </insert>
 
+    <insert id="insertUser">
+        insert into user(id, username, password, name, status)
+        values(#{id},#{username},#{password},#{name},#{status})
+    </insert>
+
     <update id="exceedToken">
         update token
         set is_exceed = 1
         where token = #{token}
+    </update>
+    <update id="exceedTokenByUsername">
+        update token
+        set is_exceed = 1
+        where username = #{username}
     </update>
 
     <select id="queryUserByUsername" resultType="cn.edu.ujn.yuh008.pojo.entity.User">

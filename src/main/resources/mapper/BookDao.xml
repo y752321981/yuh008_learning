@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.edu.ujn.yuh008.dao.BookDao">
+
+    <resultMap id="BookResult" type="cn.edu.ujn.yuh008.pojo.entity.BookCatalog">
+        <result column="id" property="id"/>
+        <result column="book_name" property="bookName"/>
+        <result column="author" property="author"/>
+        <result column="total" property="total"/>
+        <result column="storage" property="storage"/>
+        <result column="lend" property="lend"/>
+        <result column="views" property="views"/>
+        <result column="description" property="description"/>
+        <result column="language" property="language"/>
+        <result column="published_date" property="publishedDate"/>
+    </resultMap>
+
+    <insert id="insertBookCatalog">
+        insert into book_catalog(id, book_name, author, total, storage, lend, views, description, language, published_date, update_time, is_delete)
+        values(#{id}, #{bookName}, #{author}, 0, 0, 0, 0, #{description}, #{language}, #{publishedDate}, now(), 0)
+    </insert>
+
+    <insert id="insertBookItem">
+        insert into book_item(id, book_catalog_id, status, update_time)
+        values(#{id}, #{bookCatalogId}, #{status}, now());
+        update book_catalog
+        set storage = storage + 1, total = total + 1, update_time = now()
+        where id = #{bookCatalogId} and is_delete = 0;
+    </insert>
+    <update id="lendBook">
+        update book_item
+        set status = 1
+        where id = #{bookItemId};
+        update book_catalog
+        set storage = storage - 1, lend = lend + 1, update_time = now()
+        where id = (select book_catalog_id from book_item where id = #{bookItemId}) and is_delete = 0;
+        insert into book_lend(id, book_item_id, username, lend_time, last_return_time, status)
+        values(#{bookLendId}, #{bookItemId}, #{username}, now(), #{lastReturnTime}, 0);
+    </update>
+    <update id="deleteBook">
+        update book_item
+        set status = 2
+        where id = #{bookItemId};
+        update book_catalog
+        set total = total - 1, storage = storage - 1, update_time = now()
+        where id = (select book_catalog_id from book_item where id = #{bookItemId}) and is_delete = 0;
+    </update>
+    <update id="returnBook">
+        update book_item
+        set status = 0, update_time = now()
+        where id = #{bookItemId};
+        update book_catalog
+        set storage     = storage + 1,
+            lend        = lend - 1,
+            update_time = now()
+        where id = (select book_catalog_id from book_item where id = #{bookItemId}) and is_delete = 0;
+        update book_lend
+        set actual_return_time = now(),
+            status             = 1
+        where book_item_id = #{bookItemId} and status = 0;
+    </update>
+
+    <update id="deleteBookCatalog">
+        update book_catalog
+        set is_delete = 1
+        where id = #{id};
+        update book_item, total = 0, storage = 0, lend = 0
+        set status = 2
+        where book_catalog_id = #{id};
+    </update>
+
+    <select id="queryBookCatalog" resultMap="BookResult">
+        select * from book_catalog
+        <where>
+            is_delete = 0
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="bookName != null and bookName != ''">
+                and book_name like concat('%', #{bookName}, '%')
+            </if>
+            <if test="author != null and author != ''">
+                and author like concat('%', #{author}, '%')
+            </if>
+            <if test="describe != null and describe != ''">
+                and description like concat('%', #{describe}, '%')
+            </if>
+            <if test="storageNotNull != null and storageNotNull ">
+                and storage > 0
+            </if>
+            <if test="language != null and language != ''">
+                and language = #{language}
+            </if>
+            <if test="startPublishedDate != null and startPublishedDate != ''">
+                and published_date &gt;= #{startPublishedDate}
+            </if>
+            <if test="endPublishedDate != null and endPublishedDate != ''">
+                and published_date &lt;= #{endPublishedDate}
+            </if>
+        </where>
+        <if test="orderByViews != null and orderByPublishedDate != null">
+            order by views <if test="orderByViews"> desc </if>,
+            published_date <if test="orderByPublishedDate"> desc </if>
+        </if>
+        <if test="orderByViews == null and orderByPublishedDate != null">
+            order by published_date
+            <if test="orderByPublishedDate">
+                desc
+            </if>
+        </if>
+        <if test="orderByViews != null and orderByPublishedDate == null">
+            order by views
+            <if test="orderByViews">
+                desc
+            </if>
+        </if>
+    </select>
+    <select id="queryBook" resultType="cn.edu.ujn.yuh008.pojo.entity.BookItem">
+        select id, book_catalog_id as bookCatalogId, status from book_item
+        where id = #{bookItemId}
+    </select>
+</mapper>

@@ -48,6 +48,9 @@ public class LoginServiceImpl implements ILoginService {
                     token.setExceed_time(calendar.getTime());
                     this.loginDao.insertToken(token);
                     response.setToken(token.getToken());
+                } else {
+                    response.setLoginStatus(ResultEnum.ERROR.getCode());
+                    response.setMsg("密码错误");
                 }
             } else if(user.getStatus() == 1) {
                 response.setLoginStatus(ResultEnum.ERROR.getCode());

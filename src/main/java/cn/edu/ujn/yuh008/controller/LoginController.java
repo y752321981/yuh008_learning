@@ -6,12 +6,10 @@ import cn.edu.ujn.yuh008.pojo.response.LoginCheckResponse;
 import cn.edu.ujn.yuh008.pojo.request.RegisterRequset;
 import cn.edu.ujn.yuh008.service.ILoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -21,6 +19,7 @@ public class LoginController {
     @Autowired
     private ILoginService loginService;
 
+    @CrossOrigin(origins = "*",maxAge = 3600)
     @PostMapping("/loginCheck")
     private Result<LoginCheckResponse> loginCheck(@RequestBody LoginCheckRequest request) {
         if (request == null) {
@@ -28,12 +27,12 @@ public class LoginController {
         }
          return Result.success(loginService.loginCheck(request));
     }
-
+    @CrossOrigin(origins = "*",maxAge = 3600)
     @PostMapping("/logout")
     private Result<Map<String, Object>> logout(HttpServletRequest httpServletRequest) {
         return Result.success(loginService.logout(httpServletRequest));
     }
-
+    @CrossOrigin(origins = "*",maxAge = 3600)
     @PostMapping("/register")
     private Result<Map<String, Object>> register(@RequestBody RegisterRequset request) {
         if (request == null) {
@@ -41,9 +40,11 @@ public class LoginController {
         }
         return Result.success(loginService.register(request));
     }
-
+    @CrossOrigin(origins = "*",maxAge = 3600)
     @PostMapping("/hello")
-    private Result<String> hello() {
-        return Result.success("hello");
+    private Result<Map<String, String>> hello() {
+        Map<String, String> map = new HashMap<>();
+        map.put("msg", "hello");
+        return Result.success(map);
     }
 }

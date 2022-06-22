@@ -3,15 +3,15 @@ package cn.edu.ujn.yuh008.common;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.Data;
 
 import java.util.List;
 
+@Data
 public class Page<T> {
     private static final long serialVersionUID = 8545996863226528798L;
     protected long total = 0L;
-    @JsonIgnore
     protected Integer pageSize = 10;
-    @JsonIgnore
     protected Integer pageNum = 1;
     @JsonIgnore
     protected T parame;
@@ -40,44 +40,7 @@ public class Page<T> {
         this.pageNum = tPageInfo.getPages();
     }
 
-    public long getTotal() {
-        return this.total;
-    }
 
-    public Integer getPageSize() {
-        return this.pageSize;
-    }
-
-    public Integer getPageNum() {
-        return this.pageNum;
-    }
-
-    public T getParame() {
-        return this.parame;
-    }
-
-    public List<T> getList() {
-        return this.list;
-    }
-
-    public void setTotal(final long total) {
-        this.total = total;
-    }
-
-    @JsonIgnore
-    public void setPageSize(final Integer pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    @JsonIgnore
-    public void setPageNum(final Integer pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    @JsonIgnore
-    public void setParame(final T parame) {
-        this.parame = parame;
-    }
 
     public boolean equals(final Object o) {
         if (o == this) {

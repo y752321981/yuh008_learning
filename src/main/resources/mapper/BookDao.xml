@@ -63,11 +63,17 @@
 
     <update id="deleteBookCatalog">
         update book_catalog
-        set is_delete = 1
+        set is_delete = 1, total = 0, storage = 0, lend = 0,update_time = now()
         where id = #{id};
-        update book_item, total = 0, storage = 0, lend = 0
-        set status = 2
+        update book_item
+        set status = 2,update_time = now()
         where book_catalog_id = #{id};
+    </update>
+
+    <update id="updateBookCatalog">
+        update book_catalog
+        set  book_name=#{bookName}, author=#{author}, description=#{description}, language=#{language}, published_date=#{publishedDate}, update_time =now()
+        where id = #{id}
     </update>
 
     <select id="queryBookCatalog" resultMap="BookResult">

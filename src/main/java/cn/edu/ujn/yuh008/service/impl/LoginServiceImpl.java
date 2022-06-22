@@ -66,7 +66,10 @@ public class LoginServiceImpl implements ILoginService {
         response.setHeader("Content-Type", "application/json");
         if (token1 == null) {
             try(OutputStream outputStream = response.getOutputStream()) {
-                outputStream.write(JSONObject.toJSONString(Result.success("无效的token")).getBytes(StandardCharsets.UTF_8));
+                Map<String, String> result = new HashMap<>();
+                result.put("msg", "无效的token，请登录");
+                result.put("loginStatus", "99");
+                outputStream.write(JSONObject.toJSONString(Result.success(result)).getBytes(StandardCharsets.UTF_8));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -119,8 +122,10 @@ public class LoginServiceImpl implements ILoginService {
             user.setPassword(request.getPassword());
             user.setName(request.getName());
             user.setStatus(0);
+            this.loginDao.insertUser(user);
             result.put("code", ResultEnum.SUCCESS.getCode());
             result.put("msg", "注册成功");
+
             return result;
         }
     }

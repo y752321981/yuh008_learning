@@ -21,4 +21,6 @@ public interface IBookService {
     Map<String, String> deleteBook(BookDeleteRequest request);
 
     Map<String, String> deleteBookCatalog(BookCatalog request);
+
+    Map<String, String> updateBookCatalog(BookCatalog request);
 }

@@ -27,4 +27,6 @@ public interface BookDao {
     void deleteBookCatalog(BookCatalog bookCatalog);
 
     void deleteBook(@Param("bookItemId")String bookItemId);
+
+    void updateBookCatalog(BookCatalog request);
 }

@@ -34,7 +34,22 @@ public class BookServiceImpl implements IBookService {
         Page<BookCatalog> books = new Page<>(request.getPageNum(), request.getPageSize());
         List<BookCatalog> list = this.bookDao.queryBookCatalog(request);
         books.setList(list);
+        books.setMsg("共获取目录" + books.getTotal() + "项");
         return books;
+    }
+
+    @Override
+    public Map<String, String> updateBookCatalog(BookCatalog request) {
+        Map<String, String> result = new HashMap<>();
+        try {
+            this.bookDao.updateBookCatalog(request);
+            result.put("msg", "更新书目成功");
+        } catch (Exception e) {
+            result.put("msg", "更新书目异常");
+            result.put("error", e.getMessage());
+        }
+
+        return result;
     }
 
     @Override
@@ -75,14 +90,23 @@ public class BookServiceImpl implements IBookService {
             result.put("msg", "请输入完整的目录编码和书名来执行删除操作");
             return result;
         }
-        try {
-            this.bookDao.deleteBookCatalog(request);
-            result.put("msg", "已删除该目录条，并删除其下所有图书");
-        } catch (Exception e) {
-            e.printStackTrace();
-            result.put("msg", "删除目录时异常");
-            result.put("error", e.getMessage());
+        BookCatalogQueryRequest bookCatalogQueryRequest = new BookCatalogQueryRequest();
+        bookCatalogQueryRequest.setId(request.getId());
+        bookCatalogQueryRequest.setBookName(request.getBookName());
+        List<BookCatalog> bookCatalogs = this.bookDao.queryBookCatalog(bookCatalogQueryRequest);
+        if (bookCatalogs == null || bookCatalogs.size() == 0) {
+            result.put("msg", "书名输入不正确");
+        } else {
+            try {
+                this.bookDao.deleteBookCatalog(request);
+                result.put("msg", "已删除该目录条，并删除其下所有图书");
+            } catch (Exception e) {
+                e.printStackTrace();
+                result.put("msg", "删除目录时异常");
+                result.put("error", e.getMessage());
+            }
         }
+
 
 
         return result;

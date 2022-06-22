@@ -16,7 +16,7 @@ public class Page<T> {
     @JsonIgnore
     protected T parame;
     protected List<T> list;
-
+    private String msg;
     private Page() {
     }
 

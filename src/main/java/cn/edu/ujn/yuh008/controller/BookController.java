@@ -3,6 +3,7 @@ package cn.edu.ujn.yuh008.controller;
 import cn.edu.ujn.yuh008.common.Page;
 import cn.edu.ujn.yuh008.common.Result;
 import cn.edu.ujn.yuh008.pojo.entity.BookCatalog;
+import cn.edu.ujn.yuh008.pojo.entity.BookItem;
 import cn.edu.ujn.yuh008.pojo.request.*;
 import cn.edu.ujn.yuh008.service.IBookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,15 @@ public class BookController {
         }
         return Result.success(this.bookService.addBookCatalog(request));
     }
+    @CrossOrigin(origins = "*",maxAge = 3600)
+    @PostMapping("/updateBookCatalog")
+    private Result<Map<String, String>> updateBookCatalog(@RequestBody BookCatalog request) {
+        if (request == null) {
+            return Result.success("无请求体");
+        }
+        return Result.success(this.bookService.updateBookCatalog(request));
+    }
+
     @CrossOrigin(origins = "*",maxAge = 3600)
     @PostMapping("/deleteBookCatalog")
     private Result<Map<String, String>> deleteBookCatalog(@RequestBody BookCatalog request) {
@@ -65,6 +75,14 @@ public class BookController {
         }
         return Result.success(this.bookService.returnBook(request));
     }
+
+    private Result<Page<BookItem>> queryBookItem(@RequestBody BookAddRequest request) {
+        if (request == null) {
+            return Result.success("无请求体");
+        }
+        return Result.success(this.bookService.returnBook(request));
+    }
+
     @CrossOrigin(origins = "*",maxAge = 3600)
     @PostMapping("/deleteBook")
     private Result<Map<String, String>> deleteBook(@RequestBody BookDeleteRequest request) {

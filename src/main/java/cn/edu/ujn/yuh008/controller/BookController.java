@@ -75,12 +75,13 @@ public class BookController {
         }
         return Result.success(this.bookService.returnBook(request));
     }
-
-    private Result<Page<BookItem>> queryBookItem(@RequestBody BookAddRequest request) {
+    @CrossOrigin(origins = "*",maxAge = 3600)
+    @PostMapping("/queryBookItem")
+    private Result<Page<BookItem>> queryBookItem(@RequestBody BookQueryRequest request) {
         if (request == null) {
             return Result.success("无请求体");
         }
-        return Result.success(this.bookService.returnBook(request));
+        return Result.success(this.bookService.queryBookItem(request));
     }
 
     @CrossOrigin(origins = "*",maxAge = 3600)

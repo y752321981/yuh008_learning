@@ -2,6 +2,7 @@ package cn.edu.ujn.yuh008.service;
 
 import cn.edu.ujn.yuh008.common.Page;
 import cn.edu.ujn.yuh008.pojo.entity.BookCatalog;
+import cn.edu.ujn.yuh008.pojo.entity.BookItem;
 import cn.edu.ujn.yuh008.pojo.request.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,4 +24,6 @@ public interface IBookService {
     Map<String, String> deleteBookCatalog(BookCatalog request);
 
     Map<String, String> updateBookCatalog(BookCatalog request);
+
+    Page<BookItem> queryBookItem(BookQueryRequest request);
 }

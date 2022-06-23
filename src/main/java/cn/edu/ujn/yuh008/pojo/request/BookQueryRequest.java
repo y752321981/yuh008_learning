@@ -1,4 +1,4 @@
-package cn.edu.ujn.yuh008.pojo.entity;
+package cn.edu.ujn.yuh008.pojo.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookItem {
-    private String id;
+public class BookQueryRequest {
     private String bookCatalogId;
-    private Integer status;
-    private String statusMsg;
+    private Integer pageSize;
+    private Integer pageNum;
 }

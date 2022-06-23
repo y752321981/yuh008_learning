@@ -126,4 +126,8 @@
         select id, book_catalog_id as bookCatalogId, status from book_item
         where id = #{bookItemId}
     </select>
+    <select id="queryBookByCatalogId" resultType="cn.edu.ujn.yuh008.pojo.entity.BookItem">
+        select id, book_catalog_id as bookCatalogId, status from book_item
+        where book_catalog_id = #{bookCatalogId}
+    </select>
 </mapper>

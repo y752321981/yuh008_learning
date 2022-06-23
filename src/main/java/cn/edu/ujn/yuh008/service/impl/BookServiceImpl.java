@@ -113,6 +113,28 @@ public class BookServiceImpl implements IBookService {
     }
 
     @Override
+    public Page<BookItem> queryBookItem(BookQueryRequest request) {
+        Page<BookItem> books = new Page<>(request.getPageNum(), request.getPageSize());
+        List<BookItem> bookItems = this.bookDao.queryBookByCatalogId(request.getBookCatalogId());
+        bookItems.forEach(item -> {
+            switch (item.getStatus()) {
+                case 0:
+                    item.setStatusMsg("正常");
+                    break;
+                case 1:
+                    item.setStatusMsg("租借中");
+                    break;
+                case 2:
+                    item.setStatusMsg("已报废");
+                    break;
+            }
+        });
+        books.setList(bookItems);
+        books.setMsg("共获取图书" + books.getTotal() + "项");
+        return books;
+    }
+
+    @Override
     public Map<String, String> lendBook(BookLendRequest request, HttpServletRequest httpServletRequest) {
         Map<String, String> result = new HashMap<>();
         BookItem bookItem = this.bookDao.queryBook(request.getBookItemId());
@@ -169,7 +191,7 @@ public class BookServiceImpl implements IBookService {
             bookItem.setStatus(0);
             try {
                 this.bookDao.insertBookItem(bookItem);
-                result.put("msg", "图书入库成功");
+                result.put("msg", "图书入库成功,编号为:" + bookItem.getId());
             } catch (Exception e) {
                 e.printStackTrace();
                 result.put("msg", "图书入库出现异常");
